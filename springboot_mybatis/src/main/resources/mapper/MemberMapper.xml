@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ksmart36.mybatis.mapper.MemberMapper">
+	<resultMap type="Member" id="memberResultMap">
+		<result column="m_id"		property="memberId"/>
+		<result column="m_pw"		property="memberPw"/>
+		<result column="m_name"		property="memberName"/>
+		<result column="m_level"	property="memberLevel"/>
+		<result column="m_email"	property="memberEmail"/>
+		<result column="m_addr"		property="memberAddr"/>
+		<result column="m_reg_date"	property="memberRegDate"/>		
+	</resultMap>
+	<select id="MemberSearchList" resultType="Member" resultMap="memberResultMap">
+		select
+			m_id		<!-- AS memberId -->
+			,m_pw		<!-- AS memberPw -->
+			,m_name 	<!-- AS memberName -->
+			,m_level	<!-- AS memberLevel -->
+			,m_email	<!-- AS memberEmail -->
+			,m_addr		<!-- AS memberAddr -->
+			,m_reg_date	<!-- AS memberRegDate -->
+		from
+			tb_member m
+		inner join
+			tb_member_level l
+		on
+			m.m_level = l.level_num
+		where
+			
+			${sk} LIKE CONCAT('%',#{sv},'%')
+			<!-- ${sk} LIKE '%${sv}%' -->
+	</select>
+
+	<delete id="deleteGoods" parameterType="String">
+		DELETE 
+		FROM tb_goods
+		WHERE 
+			<if test="memberId != null and memberId != ''.toString()">
+		  		g_seller_id = #{memberId}
+		  	</if>
+	</delete>
+	<delete id="deleteOrder" parameterType="String">
+		DELETE 
+		FROM tb_order
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<foreach collection="goodsCodeList" item="item" separator="OR">
+				<if test="item.goodsCode != null and item.goodsCode != ''.toString()">		  		
+					o_g_code = #{item.goodsCode}
+			  	</if>
+			</foreach>
+		</trim>
+	</delete>
+	<select id="getGoodsCodeById" parameterType="String" resultType="hashMap">
+		select
+			g_code		AS goodsCode
+		from
+			tb_goods
+		where
+			g_seller_id = #{memberId}
+		
+	</select>	
+	<delete id="deleteLogin" parameterType="String">
+		DELETE 
+		FROM tb_login
+		WHERE 
+			<if test="memberId != null and memberId != ''.toString()">
+		  		login_id = #{memberId}
+		  	</if>
+	
+	</delete>
+	<delete id="deleteMember" parameterType="String">
+		DELETE 
+		FROM tb_member
+		WHERE 
+			<if test="memberId != null and memberId != ''.toString()">
+		  		m_id = #{memberId}
+		  	</if>
+	</delete>
+	<update id="modifyMember" parameterType="Member">
+		UPDATE tb_member
+		<trim prefix="set" suffixOverrides=",">
+			<!-- neq란? 같지 않다는 의미 즉, != 와 같은 의미  -->
+			<if test="memberPw != null and memberPw neq ''.toString()">
+				 m_pw = #{memberPw},
+			</if>
+			<if test="memberName != null and memberName neq ''.toString()">
+				 m_name = #{memberName},
+			</if>
+			<if test="memberLevel != null and memberLevel neq ''.toString()">
+				 m_level = #{memberLevel},
+			</if>
+			<if test="memberEmail != null and memberEmail neq ''.toString()">
+				 m_email = #{memberEmail},
+			</if>
+			<if test="memberAddr != null and memberAddr neq ''.toString()">
+				 m_addr = #{memberAddr}
+			</if>
+		</trim>
+	
+		WHERE
+			m_id = #{memberId}
+	</update>
+	<select id="getMemberById" parameterType="String" resultType="Member">
+		select
+			m_id		AS memberId
+			,m_pw		AS memberPw
+			,m_name 	AS memberName
+			,m_level	AS memberLevel
+			,m_email	AS memberEmail
+			,m_addr		AS memberAddr
+			,m_reg_date	AS memberRegDate
+		from
+			tb_member
+		where
+			m_id = #{memberId}
+		
+	</select>	
+
+	<insert id="addMember" parameterType="Member">
+		insert into tb_member
+		(m_id, m_pw, m_name, m_level, m_email, m_addr, m_reg_date)
+		values
+		(
+			 #{memberId}
+			 ,#{memberPw}
+			 ,#{memberName}
+			 ,4
+			 ,#{memberEmail}
+			 ,#{memberAddr}
+			 ,now()
+			)
+	</insert>
+
+	<select id="getMemberList" resultType="Member">
+		select
+			m_id		AS memberId
+			,m_pw		AS memberPw
+			,m_name 	AS memberName
+			,m_level	AS memberLevel
+			,m_email	AS memberEmail
+			,m_addr		AS memberAddr
+			,m_reg_date	AS memberRegDate
+		from
+			tb_member
+	</select>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ksmart36.mybatis.mapper.GoodsMapper">
+<resultMap type="Goods" id="goodsResultMap">
+		<result column="g_code"		property="goodsCode"/>
+		<result column="g_name"		property="goodsName"/>
+		<result column="g_price"		property="goodsPrice"/>
+		<result column="g_seller_id"	property="goodsSellerId"/>
+		<result column="g_reg_date"	property="goodsRegDate"/>		
+</resultMap>
+<!--상품수정 -->
+	<update id="updateGoods" >
+		UPDATE tb_goods
+		SET
+			g_name = #{goodsName},
+			g_price = #{goodsPrice}
+		WHERE 
+			g_code = #{goodsCode};
+	</update>
+	
+<!-- 상품수정 및 삭제 전처리 - 상품코드로 검색  -->
+	<select id="getGoodsByCode" resultMap="goodsResultMap" resultType="Goods">
+		SELECT
+			*		
+		FROM
+			tb_goods
+		WHERE
+			g_code = #{goodsCode}
+	</select>
+	
+<!--상품리스트 조회  -->
+	<select id="getGoodsList" resultType="Goods" resultMap="goodsResultMap">
+		SELECT
+			g_code,
+			g_name,
+			g_price,
+			g_seller_id,
+			g_reg_date
+		FROM
+			tb_goods;		
+	</select>
+
+<!--상품코드검색  -->
+	<select id="goodsMaxCode" resultType="int">
+		select max(CAST(substring(g_code,2) AS DECIMAL)) +1
+		from tb_goods
+	</select>
+	
+<!-- 상품등록  -->
+	<insert id="addGoods" parameterType="Goods">
+		insert into tb_goods
+		(g_code, g_name, g_price, g_seller_id, g_reg_date)
+		values
+		(
+		 #{goodsCode}
+		 ,#{goodsName}
+		 ,#{goodsPrice}
+		 ,#{goodsSellerId}
+		 ,now()
+		)
+	</insert>
+</mapper>

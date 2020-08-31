@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/default}">
+	  
+	<th:block layout:fragment="customTitle">
+		<title th:text="${title}">상품수정</title>
+	</th:block>
+	
+	<th:block layout:fragment="customContent">
+		<form action="/updateGoods" method="post">
+			<table border="1">
+				<tr>
+					<td>상품코드</td>
+					<td><input type="text" name="goodsCode" th:value="${goods.goodsCode}" readonly></td>
+				</tr>
+				<tr>
+		 			<td>상품명</td>
+					<td><input type="text" name="goodsName" th:value="${goods.goodsName}"></td>
+				</tr>	
+				<tr>
+		 			<td>상품가격</td>
+					<td><input type="text" name="goodsPrice" th:value="${goods.goodsPrice}"></td>
+				</tr>	
+				<tr>
+					<td colspan="2" style="text-align:center;"><button type="submit" >상품수정</button></td>
+				</tr>				
+			</table>
+		</form>
+	</th:block>
+
+
+</html>
